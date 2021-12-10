@@ -32,11 +32,11 @@ Address::Address(const sockaddr *addr, const size_t size) : _size(size) {
 class gai_error_category : public error_category {
   public:
     //! The name of the wrapped error
-    const char *name() const noexcept override { return "gai_error_category"; }
+    [[nodiscard]] const char *name() const noexcept override { return "gai_error_category"; }
     //! \brief An error message
     //! \param[in] return_value the error return value from [getaddrinfo(3)](\ref man3::getaddrinfo)
     //!                         or [getnameinfo(3)](\ref man3::getnameinfo)
-    string message(const int return_value) const noexcept override { return gai_strerror(return_value); }
+    [[nodiscard]] string message(const int return_value) const noexcept override { return gai_strerror(return_value); }
 };
 
 //! \param[in] node is the hostname or dotted-quad address
