@@ -48,8 +48,9 @@ void ByteStream::pop_output(const size_t len) {
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
 std::string ByteStream::read(const size_t len) {
+    auto res = peek_output(len);
     pop_output(len);
-    return peek_output(len);
+    return res;
 }
 
 void ByteStream::end_input() { _input_ended = true; }
