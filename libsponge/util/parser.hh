@@ -20,7 +20,7 @@ enum class ParseResult {
 };
 
 //! Output a string representation of a ParseResult
-std::string as_string(const ParseResult r);
+std::string as_string(ParseResult r);
 
 class NetParser {
   private:
@@ -28,7 +28,7 @@ class NetParser {
     ParseResult _error = ParseResult::NoError;  //!< Result of parsing so far
 
     //! Check that there is sufficient data to parse the next token
-    void _check_size(const size_t size);
+    void _check_size(size_t size);
 
     //! Generic integer parsing method (used by u32, u16, u8)
     template <typename T>
@@ -37,17 +37,17 @@ class NetParser {
   public:
     NetParser(Buffer buffer) : _buffer(buffer) {}
 
-    Buffer buffer() const { return _buffer; }
+    [[nodiscard]] Buffer buffer() const { return _buffer; }
 
     //! Get the current value stored in BaseParser::_error
-    ParseResult get_error() const { return _error; }
+    [[nodiscard]] ParseResult get_error() const { return _error; }
 
     //! \brief Set BaseParser::_error
     //! \param[in] res is the value to store in BaseParser::_error
     void set_error(ParseResult res) { _error = res; }
 
     //! Returns `true` if there has been an error
-    bool error() const { return get_error() != ParseResult::NoError; }
+    [[nodiscard]] bool error() const { return get_error() != ParseResult::NoError; }
 
     //! Parse a 32-bit integer in network byte order from the data stream
     uint32_t u32();
@@ -59,7 +59,7 @@ class NetParser {
     uint8_t u8();
 
     //! Remove n bytes from the buffer
-    void remove_prefix(const size_t n);
+    void remove_prefix(size_t n);
 };
 
 struct NetUnparser {
@@ -67,13 +67,13 @@ struct NetUnparser {
     static void _unparse_int(std::string &s, T val);
 
     //! Write a 32-bit integer into the data stream in network byte order
-    static void u32(std::string &s, const uint32_t val);
+    static void u32(std::string &s, uint32_t val);
 
     //! Write a 16-bit integer into the data stream in network byte order
-    static void u16(std::string &s, const uint16_t val);
+    static void u16(std::string &s, uint16_t val);
 
     //! Write an 8-bit integer into the data stream in network byte order
-    static void u8(std::string &s, const uint8_t val);
+    static void u8(std::string &s, uint8_t val);
 };
 
 #endif  // SPONGE_LIBSPONGE_PARSER_HH

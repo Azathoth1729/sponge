@@ -19,14 +19,14 @@ class Socket : public FileDescriptor {
 
   protected:
     //! Construct via [socket(2)](\ref man2::socket)
-    Socket(const int domain, const int type);
+    Socket(int domain, int type);
 
     //! Construct from a file descriptor.
-    Socket(FileDescriptor &&fd, const int domain, const int type);
+    Socket(FileDescriptor &&fd, int domain, int type);
 
     //! Wrapper around [setsockopt(2)](\ref man2::setsockopt)
     template <typename option_type>
-    void setsockopt(const int level, const int option, const option_type &option_value);
+    void setsockopt(int level, int option, const option_type &option_value);
 
   public:
     //! Bind a socket to a specified address with [bind(2)](\ref man2::bind), usually for listen/accept
@@ -36,12 +36,12 @@ class Socket : public FileDescriptor {
     void connect(const Address &address);
 
     //! Shut down a socket via [shutdown(2)](\ref man2::shutdown)
-    void shutdown(const int how);
+    void shutdown(int how);
 
     //! Get local address of socket with [getsockname(2)](\ref man2::getsockname)
-    Address local_address() const;
+    [[nodiscard]] Address local_address() const;
     //! Get peer address of socket with [getpeername(2)](\ref man2::getpeername)
-    Address peer_address() const;
+    [[nodiscard]] Address peer_address() const;
 
     //! Allow local address to be reused sooner via [SO_REUSEADDR](\ref man7::socket)
     void set_reuseaddr();
@@ -65,10 +65,10 @@ class UDPSocket : public Socket {
     };
 
     //! Receive a datagram and the Address of its sender
-    received_datagram recv(const size_t mtu = 65536);
+    received_datagram recv(size_t mtu = 65536);
 
     //! Receive a datagram and the Address of its sender (caller can allocate storage)
-    void recv(received_datagram &datagram, const size_t mtu = 65536);
+    void recv(received_datagram &datagram, size_t mtu = 65536);
 
     //! Send a datagram to specified Address
     void sendto(const Address &destination, const BufferViewList &payload);
@@ -96,7 +96,7 @@ class TCPSocket : public Socket {
     TCPSocket() : Socket(AF_INET, SOCK_STREAM) {}
 
     //! Mark a socket as listening for incoming connections
-    void listen(const int backlog = 16);
+    void listen(int backlog = 16);
 
     //! Accept a new incoming connection
     TCPSocket accept();

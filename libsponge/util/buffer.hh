@@ -25,7 +25,7 @@ class Buffer {
 
     //! \name Expose contents as a std::string_view
     //!@{
-    std::string_view str() const {
+    [[nodiscard]] std::string_view str() const {
         if (not _storage) {
             return {};
         }
@@ -36,17 +36,17 @@ class Buffer {
     //!@}
 
     //! \brief Get character at location `n`
-    uint8_t at(const size_t n) const { return str().at(n); }
+    [[nodiscard]] uint8_t at(const size_t n) const { return str().at(n); }
 
     //! \brief Size of the string
-    size_t size() const { return str().size(); }
+    [[nodiscard]] size_t size() const { return str().size(); }
 
     //! \brief Make a copy to a new std::string
-    std::string copy() const { return std::string(str()); }
+    [[nodiscard]] std::string copy() const { return std::string(str()); }
 
     //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
     //! \note Doesn't free any memory until the whole string has been discarded in all copies of the Buffer.
-    void remove_prefix(const size_t n);
+    void remove_prefix(size_t n);
 };
 
 //! \brief A reference-counted discontiguous string that can discard bytes from the front
@@ -65,7 +65,7 @@ class BufferList {
     BufferList() = default;
 
     //! \brief Construct from a Buffer
-    BufferList(Buffer buffer) : _buffers{buffer} {}
+    BufferList(Buffer buffer) : _buffers{std::move(buffer)} {}
 
     //! \brief Construct by taking ownership of a std::string
     BufferList(std::string &&str) noexcept {
@@ -75,23 +75,23 @@ class BufferList {
     //!@}
 
     //! \brief Access the underlying queue of Buffers
-    const std::deque<Buffer> &buffers() const { return _buffers; }
+    [[nodiscard]] const std::deque<Buffer> &buffers() const { return _buffers; }
 
     //! \brief Append a BufferList
     void append(const BufferList &other);
 
     //! \brief Transform to a Buffer
     //! \note Throws an exception unless BufferList is contiguous
-    operator Buffer() const;
+    explicit operator Buffer() const;
 
     //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
     void remove_prefix(size_t n);
 
     //! \brief Size of the string
-    size_t size() const;
+    [[nodiscard]] size_t size() const;
 
     //! \brief Make a copy to a new std::string
-    std::string concatenate() const;
+    [[nodiscard]] std::string concatenate() const;
 };
 
 //! \brief A non-owning temporary view (similar to std::string_view) of a discontiguous string
@@ -112,19 +112,19 @@ class BufferViewList {
     BufferViewList(const BufferList &buffers);
 
     //! \brief Construct from a std::string_view
-    BufferViewList(std::string_view str) { _views.push_back({const_cast<char *>(str.data()), str.size()}); }
+    BufferViewList(std::string_view str) { _views.emplace_back(const_cast<char *>(str.data()), str.size()); }
     //!@}
 
     //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
     void remove_prefix(size_t n);
 
     //! \brief Size of the string
-    size_t size() const;
+    [[nodiscard]] size_t size() const;
 
     //! \brief Convert to a vector of `iovec` structures
     //! \note used for system calls that write discontiguous buffers,
     //! e.g. [writev(2)](\ref man2::writev) and [sendmsg(2)](\ref man2::sendmsg)
-    std::vector<iovec> as_iovecs() const;
+    [[nodiscard]] std::vector<iovec> as_iovecs() const;
 };
 
 #endif  // SPONGE_LIBSPONGE_BUFFER_HH

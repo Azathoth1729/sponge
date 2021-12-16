@@ -18,8 +18,6 @@ class StreamReassembler {
 
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
-
-    size_t _head_index = 0;
     std::map<size_t, char> _towrite{};  // sorted container to remember substrings that haven't written
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.

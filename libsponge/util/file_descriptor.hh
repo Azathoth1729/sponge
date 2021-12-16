@@ -21,7 +21,7 @@ class FileDescriptor {
         unsigned _write_count = 0;  //!< The numberof times FDWrapper::_fd has been written
 
         //! Construct from a file descriptor number returned by the kernel
-        explicit FDWrapper(const int fd);
+        explicit FDWrapper(int fd);
         //! Closes the file descriptor upon destruction
         ~FDWrapper();
         //! Calls [close(2)](\ref man2::close) on FDWrapper::_fd
@@ -50,16 +50,16 @@ class FileDescriptor {
 
   public:
     //! Construct from a file descriptor number returned by the kernel
-    explicit FileDescriptor(const int fd);
+    explicit FileDescriptor(int fd);
 
     //! Free the std::shared_ptr; the FDWrapper destructor calls close() when the refcount goes to zero.
     ~FileDescriptor() = default;
 
     //! Read up to `limit` bytes
-    std::string read(const size_t limit = std::numeric_limits<size_t>::max());
+    std::string read(size_t limit = std::numeric_limits<size_t>::max());
 
     //! Read up to `limit` bytes into `str` (caller can allocate storage)
-    void read(std::string &str, const size_t limit = std::numeric_limits<size_t>::max());
+    void read(std::string &str, size_t limit = std::numeric_limits<size_t>::max());
 
     //! Write a string, possibly blocking until all is written
     size_t write(const char *str, const bool write_all = true) { return write(BufferViewList(str), write_all); }
@@ -68,34 +68,34 @@ class FileDescriptor {
     size_t write(const std::string &str, const bool write_all = true) { return write(BufferViewList(str), write_all); }
 
     //! Write a buffer (or list of buffers), possibly blocking until all is written
-    size_t write(BufferViewList buffer, const bool write_all = true);
+    size_t write(BufferViewList buffer, bool write_all = true);
 
     //! Close the underlying file descriptor
     void close() { _internal_fd->close(); }
 
     //! Copy a FileDescriptor explicitly, increasing the FDWrapper refcount
-    FileDescriptor duplicate() const;
+    [[nodiscard]] FileDescriptor duplicate() const;
 
     //! Set blocking(true) or non-blocking(false)
-    void set_blocking(const bool blocking_state);
+    void set_blocking(bool blocking_state);
 
     //! \name FDWrapper accessors
     //!@{
 
     //! underlying descriptor number
-    int fd_num() const { return _internal_fd->_fd; }
+    [[nodiscard]] int fd_num() const { return _internal_fd->_fd; }
 
     //! EOF flag state
-    bool eof() const { return _internal_fd->_eof; }
+    [[nodiscard]] bool eof() const { return _internal_fd->_eof; }
 
     //! closed flag state
-    bool closed() const { return _internal_fd->_closed; }
+    [[nodiscard]] bool closed() const { return _internal_fd->_closed; }
 
     //! number of reads
-    unsigned int read_count() const { return _internal_fd->_read_count; }
+    [[nodiscard]] unsigned int read_count() const { return _internal_fd->_read_count; }
 
     //! number of writes
-    unsigned int write_count() const { return _internal_fd->_write_count; }
+    [[nodiscard]] unsigned int write_count() const { return _internal_fd->_write_count; }
     //!@}
 
     //! \name Copy/move constructor/assignment operators

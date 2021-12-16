@@ -54,13 +54,13 @@ struct TCPHeader {
     ParseResult parse(NetParser &p);
 
     //! Serialize the TCP fields
-    std::string serialize() const;
+    [[nodiscard]] std::string serialize() const;
 
     //! Return a string containing a header in human-readable format
-    std::string to_string() const;
+    [[nodiscard]] std::string to_string() const;
 
     //! Return a string containing a human-readable summary of the header
-    std::string summary() const;
+    [[nodiscard]] std::string summary() const;
 
     bool operator==(const TCPHeader &other) const;
 };

@@ -9,7 +9,7 @@ using namespace std;
 
 //! \param[in] buffer string/Buffer to be parsed
 //! \param[in] datagram_layer_checksum pseudo-checksum from the lower-layer protocol
-ParseResult TCPSegment::parse(const Buffer buffer, const uint32_t datagram_layer_checksum) {
+ParseResult TCPSegment::parse(const Buffer& buffer, const uint32_t datagram_layer_checksum) {
     InternetChecksum check(datagram_layer_checksum);
     check.add(buffer);
     if (check.value()) {

@@ -2,6 +2,9 @@
 // Created by azathoth on 2021/12/10.
 //
 
+#include "tcp_header.hh"
+
+#include <bitset>
 #include <deque>
 #include <functional>
 #include <iostream>
@@ -114,9 +117,42 @@ void stupid_test() {
     cout << "j: " << j << endl;
 }
 
+void sizeof_test() { cout << sizeof(size_t) << "\t" << sizeof(char) << "\t" << sizeof(int) << endl; }
+
+std::string intBit(int a) {
+    std::ostringstream os;
+    os << "Decimal: " << a << "\t"
+       << "Binary: " << bitset<32>(a) << endl;
+    return os.str();
+}
+
+void int_test() {
+    uint32_t a = -1;
+    cout << a << "\t" << bitset<32>(a) << endl;
+}
+
+void enum_test() {
+    enum class ParseTest {
+        NoError = 0,      //!< Success
+        BadChecksum,      //!< Bad checksum
+        PacketTooShort,   //!< Not enough data to finish parsing
+        WrongIPVersion,   //!< Got a version of IP other than 4
+        HeaderTooShort,   //!< Header length is shorter than minimum required
+        TruncatedPacket,  //!< Packet length is shorter than header claims
+        Unsupported       //!< Packet uses unsupported features
+    };
+    auto tar = static_cast<size_t>(ParseTest::HeaderTooShort);
+    tar += 2;
+    auto parseRet = static_cast<ParseTest>(tar);
+    auto judge = parseRet == ParseTest::Unsupported;
+    cout << judge << endl;
+}
+
 int main() {
     //    map_test();
     //    map_test2();
-    set_test();
+    //    set_test();
     //    string_test();
+    //    int_test();
+    enum_test();
 }

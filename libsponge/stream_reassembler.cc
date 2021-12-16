@@ -26,7 +26,7 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
     }
 
     // if data have benn written, test if eof then return
-    if (index + data.size() < _head_index) {
+    if (index + data.size() <  _output.bytes_written()) {
         if (eof && empty()) {
             _output.end_input();
         }
